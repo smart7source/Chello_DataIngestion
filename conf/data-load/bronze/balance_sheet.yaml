@@ -1,0 +1,44 @@
+# Invoice Data.
+db_destination: 'DB_Chello'
+s3_destination: s3://chello/ingestion/output_files/
+table_job_tracking: 'job_tracking'
+table_bronze_layer: 'STG_FS_BAL_ST'
+table_silver_layer: 'STG_FS_BAL_ST'
+table_gold_layer: 'STG_FS_BAL_ST'
+raw_json_flatten_columns:
+  - reportItems_accountId
+  - reportItems_accountName
+  - reportItems_balance
+  - reportItems_date
+  - reportItems_accountCategory_id
+  - reportItems_accountCategory_status
+  - reportInfo_companyName
+  - reportInfo_currency
+  - reportInfo_generatedDate
+  - reportInfo_reportName
+  - reportItems_accountCategory_levels_confidence
+  - reportItems_accountCategory_levels_levelName
+  - job_id
+  - file_name
+  - file_load_dt
+raw_json_2_database:
+  reportItems_accountId: acc_id
+  reportItems_accountName: acc_name
+  reportItems_balance: bal_amt
+  reportItems_date: bal_dt
+  reportItems_accountCategory_id: id
+  reportItems_accountCategory_status: status
+  reportInfo_companyName: company_name
+  reportInfo_currency: curr
+  reportInfo_generatedDate: generated_dt
+  reportInfo_reportName: report_name
+  reportItems_accountCategory_levels_confidence: confidence
+  reportItems_accountCategory_levels_levelName: level_name
+  job_id: job_id
+  file_name: file_name
+  file_load_dt: file_load_dt
+test_config1: true
+test_config2: 0
+dataquality:
+  null_check_columns: 'acc_id,id'
+dataquality_output_path: s3://chello/ingestion/dq_reports/

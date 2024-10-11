@@ -1,0 +1,70 @@
+# Invoice Data.
+db_destination: 'DB_Chello'
+s3_destination: s3://chello/ingestion/output_files/
+table_job_tracking: 'job_tracking'
+table_bronze_layer: 'STG_V_PAYMENTS'
+table_silver_layer: 'STG_V_PAYMENTS'
+table_gold_layer: 'STG_V_PAYMENTS'
+raw_json_flatten_columns:
+  - PaymentIdentifier
+  - ClaimIdentifier
+  - OrgIdentifier
+  - BillingProviderNPI
+  - RenderingProviderNPI
+  - PaymentDate
+  - PaymentAmount
+  - ProcessingStatusCode
+  - PayeeName
+  - CheckNumber
+  - CheckDate
+  - ChargeAmount
+  - PaidAmount
+  - DeductableAmount
+  - DiscountAmount
+  - CoInsAmount
+  - CoPaymentAmount
+  - AdjustReasonCode
+  - RemarkCode
+  - LateFilingCharge
+  - InterestAmount
+  - DenialType
+  - RecordCreationDate
+  - job_id
+  - file_name
+  - file_load_dt
+raw_json_2_database:
+  PaymentIdentifier: pay_id
+  ClaimIdentifier: claim_id
+  OrgIdentifier: org_id
+  BillingProviderNPI: bill_prov_npi
+  RenderingProviderNPI: rend_prov_npi
+  PaymentDate: pay_dt
+  PaymentAmount: pay_amt
+  ProcessingStatusCode: processing_status_cd
+  PayeeName: payee_name
+  CheckNumber: check_no
+  CheckDate: check_dt
+  ChargeAmount: charge_amt
+  PaidAmount: paid_amt
+  DeductableAmount: deductable_amt
+  DiscountAmount: discount_amt
+  CoInsAmount: co_ins_amt
+  CoPaymentAmount: co_pay_amt
+  AdjustReasonCode: adj_reason_cd
+  RemarkCode: remark_cd
+  LateFilingCharge: late_filing_charge
+  InterestAmount: interest_amt
+  DenialType: denial_type
+  RecordCreationDate: record_creation_dt
+  ServiceLineIdentifier: service_line_id
+  ProcedureCode: procedure_cd
+  StartServiceDate: start_service_dt
+  EndServiceDate: end_service_dt
+  job_id: job_id
+  file_name: file_name
+  file_load_dt: file_load_dt
+test_config1: true
+test_config2: 0
+dataquality:
+  null_check_columns:
+dataquality_output_path: s3://chello/ingestion/dq_reports/

@@ -1,0 +1,42 @@
+# Invoice Data.
+db_destination: 'DB_Chello'
+s3_destination: s3://chello/ingestion/output_files/
+table_job_tracking: 'job_tracking'
+table_bronze_layer: 'STG_PROVIDERS'
+table_silver_layer: 'STG_PROVIDERS'
+table_gold_layer: 'STG_PROVIDERS'
+raw_json_flatten_columns:
+  - results_id
+  - results_customerRef_id
+  - results_accountRef_name
+  - results_accountRef_id
+  - results_customerRef_companyName
+  - results_lines_amount
+  - results_currency
+  - results_date
+  - results_note
+  - results_lines_links_amount
+  - results_metadata_isDeleted
+  - job_id
+  - file_name
+  - file_load_dt
+raw_json_2_database:
+  results_id: pay_id
+  results_customerRef_id: cust_id
+  results_accountRef_name: cust_name
+  results_accountRef_id: pay_acc_id
+  results_customerRef_companyName: pay_acc_name
+  results_lines_amount: pay_total_amt
+  results_currency: pay_curr
+  results_date: pay_dt
+  results_note: pay_note
+  results_lines_links_amount: pay_lines
+  results_metadata_isDeleted: is_deleted
+  job_id: job_id
+  file_name: file_name
+  file_load_dt: file_load_dt
+test_config1: true
+test_config2: 0
+dataquality:
+  null_check_columns: 'pay_id'
+dataquality_output_path: s3://chello/ingestion/dq_reports/

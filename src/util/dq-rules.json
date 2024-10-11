@@ -1,0 +1,14 @@
+{
+  "dq_id": 101,
+  "rules": [
+    {
+      "rule_id": 1012,
+      "name": "NOT NULL fields",
+      "description": "Field should have valid value",
+      "rule_type": "not null",
+      "columns": [
+        "accountId"
+      ]
+    }
+  ]
+}
