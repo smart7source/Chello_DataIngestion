@@ -1,12 +1,15 @@
 import boto3
 import datetime
+import json
+import uuid
 
 s3 = boto3.client("s3")
 glue = boto3.client("glue")
 job_datetime=datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
+
 def lambda_handler(event, context):
-    #print("Received event: " + json.dumps(event, indent=2))
+    print("Received event: " + json.dumps(event, indent=2))
     # Get the object from the event and show its content type
     s3_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
     file_name = event["Records"][0]["s3"]["object"]["key"]
@@ -18,6 +21,8 @@ def lambda_handler(event, context):
     TPS_Claims="TPSClaims"
     TPSPayments="TPSPayments"
     supplier="Supplier"
+    transaction="transaction"
+    codat_bills="Codat_bills"
     yaml_config_bucket='chello'
     yaml_config_file=''
     if file_name is not None and balance_sheet.lower() in file_name.lower():
@@ -41,10 +46,17 @@ def lambda_handler(event, context):
     elif file_name is not None and supplier.lower() in file_name.lower():
         s3_file_name=supplier
         yaml_config_file='ingestion/dq_config_file/bronze/supplier.yaml'
+    elif file_name is not None and transaction.lower() in file_name.lower():
+        s3_file_name=transaction
+        yaml_config_file='ingestion/dq_config_file/bronze/Transactions.yaml'
+    elif file_name is not None and codat_bills.lower() in file_name.lower():
+        s3_file_name=codat_bills
+        yaml_config_file='ingestion/dq_config_file/bronze/codat_bills.yaml'
     else:
         print("Not found!")
     source_data="s3://"+s3_bucket_name+"/"+file_name
-    job_name=s3_file_name+"_"+job_datetime
+    uid = uuid.uuid4()
+    job_name=s3_file_name+"_"+job_datetime+"_"+uid.hex
     script_location = f"s3://chello/ingestion/dataIngestion.py"
     if s3_file_name in (TPS_Claims , TPSPayments):
         script_location = f"s3://chello/ingestion/dataIngestion_tps.py"
@@ -68,6 +80,8 @@ def lambda_handler(event, context):
         GlueVersion="4.0",
     )
     print("my_job:", glue_job)
+    print("default_arg ", default_args)
+    print("args passed are  ", source_data+yaml_config_bucket+yaml_config_file)
 
     try:
         response = s3.get_object(Bucket=s3_bucket_name, Key=file_name)

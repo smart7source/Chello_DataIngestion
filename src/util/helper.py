@@ -90,6 +90,7 @@ def read_raw_source(glue_context: GlueContext, raw_file_path:string, job_id:stri
                        .withColumn('file_load_dt',f.date_format(f.current_timestamp(), 'yyyy-MM-dd')))
     return raw_data_df_final
 
+
 def write_data_2_s3(glue_context: GlueContext, enrich_df:DataFrame, location:string):
     #Convert from Spark Data Frame to Glue Dynamic Frame
     data_df = DynamicFrame.fromDF(enrich_df, glue_context, "convert")
@@ -99,6 +100,17 @@ def write_data_2_s3(glue_context: GlueContext, enrich_df:DataFrame, location:str
                                                   connection_options = {"path": location},
                                                   transformation_ctx = "data_sink_1")
 
+
+def read_stage_table(glue_context: GlueContext, table_name:string):
+    query = "SELECT * FROM " + table_name
+    print("Hey I am printing the Query.............. ")
+    mysql_dynamic_frame = glue_context.read.format("jdbc") \
+        .option("driver", "com.mysql.jdbc.Driver").option("url", mysql_options["url"]) \
+        .option("user", mysql_options["user"]) \
+        .option("password", mysql_options["password"]).option("dbtable", query) \
+        .load()
+
+    return mysql_dynamic_frame
 
 def load_data_2_rds(raw_data_df:DataFrame, table_name:string):
     raw_data_df.write \
