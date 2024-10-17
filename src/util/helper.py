@@ -30,7 +30,7 @@ mysql_options = {
     "dbtable": "claims",
     "balance_sheet": "balance_sheet_debug",
     "job_tracking_table": "job_tracking",
-    "user": "new_admin_user",
+    "user": "admin123",
     "password": "Mychello08012024*"
 }
 
@@ -66,7 +66,8 @@ def read_raw_source_tps_data(glue_context: GlueContext, raw_file_path:string, jo
             "separator": "|"
         })
     raw_data_df = raw_data.toDF()
-    raw_data_df=(raw_data_df.withColumn('job_id',f.lit(job_id)).withColumn('file_name',f.lit(raw_file_path))
+    raw_data_df=(raw_data_df.withColumn('job_id',f.lit(job_id))
+                 .withColumn('file_name',f.lit(raw_file_path))
                  .withColumn('file_load_dt',f.date_format(f.current_timestamp(), 'yyyy-MM-dd')))
     return raw_data_df
 
@@ -85,6 +86,8 @@ def read_raw_source(glue_context: GlueContext, raw_file_path:string, job_id:stri
     )
     raw_data_df = raw_data.toDF()
     raw_data_df_flatten=flatten_nested_data(raw_data_df)
+    #TODO: Get the Query Company.
+
     raw_data_df_final=(raw_data_df_flatten.withColumn('job_id',f.lit(job_id))
                        .withColumn('file_name',f.lit(raw_file_path))
                        .withColumn('file_load_dt',f.date_format(f.current_timestamp(), 'yyyy-MM-dd')))
@@ -100,18 +103,6 @@ def write_data_2_s3(glue_context: GlueContext, enrich_df:DataFrame, location:str
                                                   connection_options = {"path": location},
                                                   transformation_ctx = "data_sink_1")
 
-
-def read_stage_table(glue_context: GlueContext, table_name:string):
-    query = "SELECT * FROM " + table_name
-    print("Hey I am printing the Query.............. ")
-    mysql_dynamic_frame = glue_context.read.format("jdbc") \
-        .option("driver", "com.mysql.jdbc.Driver").option("url", mysql_options["url"]) \
-        .option("user", mysql_options["user"]) \
-        .option("password", mysql_options["password"]).option("dbtable", query) \
-        .load()
-
-    return mysql_dynamic_frame
-
 def load_data_2_rds(raw_data_df:DataFrame, table_name:string):
     raw_data_df.write \
         .format("jdbc") \
@@ -122,8 +113,6 @@ def load_data_2_rds(raw_data_df:DataFrame, table_name:string):
         .mode("append") \
         .save()
 
-
-#TODO: In Case of Data is landing in multiple files or How to find the paritions
 def add_import_date_columns_from_path(df,partition_path):
     key_import_date = find_importdate(partition_path)
     import_day = key_import_date[6:]
@@ -155,6 +144,24 @@ def enrich_data(raw_data_df:DataFrame, raw_2_db_mappings):
     raw_data_df.show()
     return raw_data_df
 
+
+def read_parameter_query(glue_context: GlueContext, query:string):
+    df = glue_context.read.format("jdbc") \
+        .option("url", mysql_options["url"]) \
+        .option("query",query) \
+        .option("user", mysql_options["user"]) \
+        .option("password", mysql_options["password"]) \
+        .load()
+    return df
+
+def read_table(glue_context: GlueContext, table_name:string):
+    df = glue_context.read.format("jdbc") \
+        .option("url", mysql_options["url"]) \
+        .option("dbtable", table_name) \
+        .option("user", mysql_options["user"]) \
+        .option("password", mysql_options["password"]) \
+        .load()
+    return df
 
 
 

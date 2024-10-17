@@ -113,12 +113,7 @@ def process_ingestion_tps(raw_file_path:string, job_id:string, conf_bucket:strin
     print("####### Read Config File. ", conf_file)
     print("############################################################")
     raw_data_df=read_raw_source_tps_data(glueContext, raw_file_path, job_id)
-    print(" A:: A;; tje Data **************************")
-    print(raw_data_df.printSchema())
-    raw_data_df.show(100)
     print("Raw File Total Record Count Before Flatten...", raw_data_df.count())
-
-    #TODO: Same method for the Trizetto and Codat.
     perform_validation_ingestion_activity(raw_data_df, job_id, conf_bucket, conf_file, raw_file_path)
     print("********************** TPS Data Ingestion Completed **************************")
 
@@ -131,8 +126,6 @@ def process_ingestion(raw_file_path:string, job_id:string, conf_bucket:string, c
     print("############################################################")
     raw_data_df=read_raw_source(glueContext, raw_file_path, job_id)
     print("Raw File Total Record Count Before Flatten...", raw_data_df.count())
-
-    #TODO: Same method for the Trizetto and Codat.
     perform_validation_ingestion_activity(raw_data_df, job_id, conf_bucket, conf_file, raw_file_path)
     print("********************** Data Ingestion Completed **************************")
 
@@ -145,22 +138,9 @@ def validatedata(job_id:string, raw_data_df_flatten: DataFrame, dq_rules_dict):
     column=dq_rules_dict['null_check_columns']
     if is_not_blank(column):
         columns=re.split(',', column)
-        columns_size = len(columns)
-        print("columns------------------>")
-        print(columns)
-        print("columns_size--------------->>>>")
-        print(columns_size)
-        print("columns_size--------------->>>>")
-        print(columns_size)
-        print("About to Validation Triggered...................")
-        print("Validation Triggered..............")
         raw_data_df_flatten=raw_data_df_flatten.withColumn("null_check_result",
                                                            f.when(reduce(lambda x, y: x | y, (f.col(x).isNull() for x in columns)), True).otherwise(False))
     else:
         raw_data_df_flatten=raw_data_df_flatten.withColumn("null_check_result", f.lit(False))
 
-    print("DONE DONE DONE DONE DONE I am printing the ROWS HERE ********* ---------- Validation Triggered...................")
-    raw_data_df_flatten.show(100)
     return raw_data_df_flatten
-
-
