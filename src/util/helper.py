@@ -113,6 +113,16 @@ def load_data_2_rds(raw_data_df:DataFrame, table_name:string):
         .mode("append") \
         .save()
 
+def load_data_2_rds_custom_mode(raw_data_df:DataFrame, table_name:string, mode:string):
+    raw_data_df.write \
+        .format("jdbc") \
+        .option("url", mysql_options["url"]) \
+        .option("dbtable", table_name) \
+        .option("user", mysql_options["user"]) \
+        .option("password", mysql_options["password"]) \
+        .mode(mode) \
+        .save()
+
 def add_import_date_columns_from_path(df,partition_path):
     key_import_date = find_importdate(partition_path)
     import_day = key_import_date[6:]

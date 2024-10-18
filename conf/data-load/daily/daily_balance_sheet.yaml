@@ -1,7 +1,7 @@
 db: 'DB_Chello'
 table_job_tracking: 'job_tracking'
-table_stage_table: 'STG_FS_BAL_ST'
-table_daily_table: 'DAILY_FS_BAL_ST_TESTING'
+stage_table: 'STG_FS_BAL_ST_V'
+daily_table: 'DAILY_FS_BAL_ST_TESTING_V'
 select_columns_stage_table:
   - company_name
   - level_name
@@ -9,6 +9,12 @@ select_columns_stage_table:
   - acc_name
   - bal_dt
   - bal_amt
+concat_columns_stage_table:
+  - company_name
+  - level_name
+  - acc_id
+  - acc_name
+  - bal_dt
 group_columns_stage_table:
   - company_name
   - level_name
@@ -17,4 +23,4 @@ group_columns_stage_table:
   - bal_dt
 test_config1: true
 s3_destination: s3://chello/ingestion/output_files/daily
-sql_config: select company_name, level_name, acc_id, acc_name, bal_dt, sum(bal_amt) as bal_amt from STG_FS_BAL_ST where file_load_dt = '2024-09-15' group by company_name, level_name, acc_id, acc_name, bal_dt
+sql_config: select company_name, level_name, acc_id, acc_name, bal_dt, sum(bal_amt) as bal_amt from STG_FS_BAL_ST_V where file_load_dt = '2024-09-15' group by company_name, level_name, acc_id, acc_name, bal_dt

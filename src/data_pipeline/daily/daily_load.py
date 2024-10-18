@@ -1,12 +1,12 @@
 import boto3
-
+import string
 from awsglue.job import Job
 from pyspark.context import SparkContext
 from pyspark.sql.functions import *
 from awsglue.context import GlueContext
 import pyspark.sql.functions as f
 from pyspark.sql.functions import col, array, when, array_remove
-from src.util.helper import (read_parameter_query, load_data_2_rds, read_table, write_data_2_s3)
+from src.util.helper import (read_parameter_query, load_data_2_rds_custom_mode, read_table, write_data_2_s3, read_ingestion_conf)
 
 
 s3 = boto3.resource('s3')
@@ -17,24 +17,22 @@ job = Job(glueContext)
 logger = glueContext.get_logger()
 null_rec_count=0
 
-
-stage_select_columns = ['company_name', 'level_name', 'acc_id', 'acc_name', 'bal_dt', 'bal_amt']
-concat_columns = ['company_name', 'level_name', 'acc_id', 'acc_name', 'bal_dt']
-daily_query_1=f"""
-select company_name, level_name, acc_id, acc_name, bal_dt, sum(bal_amt) as bal_amt from STG_FS_BAL_ST_V where file_load_dt = '2024-09-15' group by company_name, level_name, acc_id, acc_name, bal_dt
-"""
-
-def process_daily_load():
-    stage_df=read_parameter_query(glueContext, daily_query_1)
+def process_daily_load(job_id:string, conf_bucket:string, conf_file:string):
+    conf=read_ingestion_conf(conf_bucket, conf_file)
+    concat_columns=conf["concat_columns_stage_table"]
+    daily_query=conf["sql_config"]
+    stage_df=read_parameter_query(glueContext, daily_query)
     if stage_df.rdd.isEmpty():
         print(f"No data found for After executing Daily SQL.")
         #TODO: Job is failed.
         return
 
-    daily_table_df=read_table(glueContext, "DAILY_FS_BAL_ST_TESTING_V")
+    stage_table=conf["stage_table"]
+    daily_table=conf["daily_table"]
+    stage_select_columns=conf["select_columns_stage_table"]
+    daily_table_df=read_table(glueContext, daily_table)
     daily_table_df_select=daily_table_df.select(*stage_select_columns)
     stage_df_select=stage_df.select(*stage_select_columns)
-
 
     daily_table_df_select = daily_table_df_select.withColumn('concatenated_cols',concat_ws("$$", *[col(x) for x in concat_columns]))
     daily_table_df_select = daily_table_df_select.withColumnRenamed('company_name', 'company_name_daily').withColumnRenamed('level_name', 'level_name_daily').withColumnRenamed('acc_id', 'acc_id_daily').withColumnRenamed('acc_name', 'acc_name_daily').withColumnRenamed('bal_dt', 'bal_dt_daily').withColumnRenamed('bal_amt', 'bal_amt_daily')
@@ -42,11 +40,13 @@ def process_daily_load():
     stage_df_select = stage_df_select.withColumn('concatenated_cols',concat_ws("$$", *[col(x) for x in concat_columns]))
     stage_df_select = stage_df_select.withColumnRenamed('company_name', 'company_name_stage').withColumnRenamed('level_name', 'level_name_stage').withColumnRenamed('acc_id', 'acc_id_stage').withColumnRenamed('acc_name', 'acc_name_stage').withColumnRenamed('bal_dt', 'bal_dt_stage').withColumnRenamed('bal_amt', 'bal_amt_stage')
 
+    print("Daily DF Counts & Data ******** ")
     daily_table_df_select.show(100, truncate=False)
-
     print(daily_table_df_select.count())
+
+    print("Stage DF Counts & Data ******** ")
     stage_df_select.show(100, truncate=False)
-    daily_table_df_select.show(100, truncate=False)
+    print(stage_df_select.count())
 
     diff_df_left_anti=stage_df_select.join(daily_table_df_select, stage_df_select["concatenated_cols"] == daily_table_df_select["concatenated_cols"], "leftanti")
     print(" DataFrame Left Anti Join. To Get the New/Individual Records. ")
@@ -96,12 +96,11 @@ def process_daily_load():
 
     print("***************************** Finsh DF before writing to DB ")
     print(" Write Data to DB and Write data to S3 File.")
-    load_data_2_rds(daily_updated_df, conf["table_bronze_layer"])
-    load_data_2_rds(daily_expired_df, conf["table_bronze_layer"])
+    #load_data_2_rds_custom_mode(daily_updated_df, daily_table, "")
+    #load_data_2_rds_custom_mode(daily_expired_df, daily_table)
     print("************ DB is updated with updated data****************")
     print("************* Data is written to S3 *****************")
-    write_data_2_s3(glueContext, daily_updated_df, conf["s3_destination"])
-    write_data_2_s3(glueContext, daily_expired_df, conf["s3_destination"])
-
+    #write_data_2_s3(glueContext, daily_updated_df, conf["s3_destination"])
+    #write_data_2_s3(glueContext, daily_expired_df, conf["s3_destination"])
     print("---------------------Daily Job Completed---------------------")
 

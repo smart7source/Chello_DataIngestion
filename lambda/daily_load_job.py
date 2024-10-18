@@ -13,7 +13,7 @@ def lambda_handler(event, context):
     uid = uuid.uuid4()
     script_location = f"s3://chello/ingestion/dataIngestion_daily.py"
     yaml_config_bucket='chello'
-    yaml_config_file='ingestion/dq_config_file/bronze/codat_bills.yaml'
+    yaml_config_file='ingestion/dq_config_file/daily/daily_balance_sheet.yaml'
     job_name="Daily_Job_"+job_datetime+"_"+uid.hex
     print(script_location)
     default_args = {
