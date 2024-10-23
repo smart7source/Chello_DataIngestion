@@ -2,9 +2,9 @@
 db_destination: 'DB_Chello'
 s3_destination: s3://chello/ingestion/output_files/
 table_job_tracking: 'job_tracking'
-table_bronze_layer: 'STG_ORGANIZATIONS'
-table_silver_layer: 'STG_ORGANIZATIONS'
-table_gold_layer: 'STG_ORGANIZATIONS'
+table_bronze_layer: 'STG_T_ORGANIZATIONS'
+table_gold_layer: ''
+table_report_layer: ''
 raw_json_flatten_columns:
   - results_id
   - results_customerRef_id
@@ -21,7 +21,7 @@ raw_json_flatten_columns:
   - file_name
   - file_load_dt
 raw_json_2_database:
-  results_id: pay_id
+  results_id: org_id
   results_customerRef_id: cust_id
   results_accountRef_name: cust_name
   results_accountRef_id: pay_acc_id

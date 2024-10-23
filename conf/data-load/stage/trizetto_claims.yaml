@@ -2,9 +2,9 @@
 db_destination: 'DB_Chello'
 s3_destination: s3://chello/ingestion/output_files/
 table_job_tracking: 'job_tracking'
-table_bronze_layer: 'STG_V_CLAIMS'
-table_silver_layer: 'STG_V_CLAIMS'
-table_gold_layer: 'STG_V_CLAIMS'
+table_bronze_layer: 'STG_T_V_CLAIMS'
+table_silver_layer: 'STG_T_V_CLAIMS'
+table_gold_layer: 'STG_T_V_CLAIMS'
 raw_json_flatten_columns:
   - Identifier
   - OrgIdentifier
@@ -17,6 +17,7 @@ raw_json_flatten_columns:
   - SecondaryPayerId
   - DiagnosisCode
   - StatusDate
+  - ClaimAckCode
   - RecordCreationDate
   - PrimaryPayerType
   - ReceivedDate
@@ -27,7 +28,6 @@ raw_json_flatten_columns:
   - StartServiceDate
   - EndServiceDate
   - job_id
-  - file_name
   - file_load_dt
 raw_json_2_database:
   Identifier: claim_id
@@ -41,6 +41,7 @@ raw_json_2_database:
   SecondaryPayerId: secondary_payer_id
   DiagnosisCode: diagnosis_cd
   StatusDate: status_dt
+  ClaimAckCode: claim_ack_cd
   RecordCreationDate: record_creation_dt
   PrimaryPayerType: primary_payer_type
   ReceivedDate: received_dt
@@ -51,7 +52,6 @@ raw_json_2_database:
   StartServiceDate: start_service_dt
   EndServiceDate: end_service_dt
   job_id: job_id
-  file_name: file_name
   file_load_dt: file_load_dt
 test_config1: true
 test_config2: 0

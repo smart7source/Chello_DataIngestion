@@ -2,9 +2,9 @@
 db_destination: 'DB_Chello'
 s3_destination: s3://chello/ingestion/output_files/
 table_job_tracking: 'job_tracking'
-table_bronze_layer: 'STG_FS_PnL'
-table_silver_layer: 'STG_FS_PnL'
-table_gold_layer: 'STG_FS_PnL'
+table_bronze_layer: 'STG_A_FS_PnL'
+table_gold_layer: ''
+table_report_layer: ''
 raw_json_flatten_columns:
   - reportInfo_companyName
   - reportInfo_currency
@@ -19,7 +19,6 @@ raw_json_flatten_columns:
   - reportItems_accountCategory_levels_confidence
   - reportItems_accountCategory_levels_levelName
   - job_id
-  - file_name
   - file_load_dt
 raw_json_2_database:
   reportInfo_companyName: company_name
@@ -35,8 +34,7 @@ raw_json_2_database:
   reportItems_accountCategory_levels_confidence: confidence
   reportItems_accountCategory_levels_levelName: level_name
   job_id: job_id
-  file_name: file_name
   file_load_dt: file_load_dt
 dataquality:
-  null_check_columns: 'acc_id'
+  null_check_columns: 'acc_id,company_name'
 dataquality_output_path: s3://chello/ingestion/dq_reports/

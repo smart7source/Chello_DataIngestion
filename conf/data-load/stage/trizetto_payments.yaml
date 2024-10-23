@@ -2,9 +2,9 @@
 db_destination: 'DB_Chello'
 s3_destination: s3://chello/ingestion/output_files/
 table_job_tracking: 'job_tracking'
-table_bronze_layer: 'STG_V_PAYMENTS'
-table_silver_layer: 'STG_V_PAYMENTS'
-table_gold_layer: 'STG_V_PAYMENTS'
+table_bronze_layer: 'STG_T_V_PAYMENTS'
+table_gold_layer: ''
+table_report_layer: ''
 raw_json_flatten_columns:
   - PaymentIdentifier
   - ClaimIdentifier
@@ -30,7 +30,6 @@ raw_json_flatten_columns:
   - DenialType
   - RecordCreationDate
   - job_id
-  - file_name
   - file_load_dt
 raw_json_2_database:
   PaymentIdentifier: pay_id
@@ -61,10 +60,9 @@ raw_json_2_database:
   StartServiceDate: start_service_dt
   EndServiceDate: end_service_dt
   job_id: job_id
-  file_name: file_name
   file_load_dt: file_load_dt
 test_config1: true
 test_config2: 0
 dataquality:
-  null_check_columns:
+  null_check_columns: 'pay_id,org_id'
 dataquality_output_path: s3://chello/ingestion/dq_reports/

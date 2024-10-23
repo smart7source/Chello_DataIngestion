@@ -2,9 +2,9 @@
 db_destination: 'DB_Chello'
 s3_destination: s3://chello/ingestion/output_files/
 table_job_tracking: 'job_tracking'
-table_bronze_layer: 'STG_INVOICES'
-table_silver_layer: 'STG_INVOICES'
-table_gold_layer: 'STG_INVOICES'
+table_bronze_layer: 'STG_A_INVOICES'
+table_silver_layer: ''
+table_gold_layer: ''
 raw_json_flatten_columns:
   - results_id
   - results_invoiceNumber

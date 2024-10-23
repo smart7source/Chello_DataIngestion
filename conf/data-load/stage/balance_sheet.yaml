@@ -2,9 +2,9 @@
 db_destination: 'DB_Chello'
 s3_destination: s3://chello/ingestion/output_files/
 table_job_tracking: 'job_tracking'
-table_bronze_layer: 'STG_C_FS_BAL_ST'
-table_silver_layer: 'STG_FS_BAL_ST'
-table_gold_layer: 'STG_FS_BAL_ST'
+table_bronze_layer: 'STG_A_FS_BAL_ST'
+table_gold_layer: ''
+table_report_layer: ''
 raw_json_flatten_columns:
   - reportItems_accountId
   - reportItems_accountName
