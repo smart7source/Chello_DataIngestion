@@ -106,12 +106,10 @@ def process_daily_load(job_id:string, conf_bucket:string, conf_file:string):
         print (row)
         update_record(UPDATE_SQL_DAILY_LOAD, (row.flag_del, row.last_updt_dt, row.company_name,row.level_name,row.acc_id,row.acc_name, row.bal_amt, row.bal_dt))
 
-    #load_data_2_rds_custom_mode(daily_updated_df, daily_table, "")
-    #load_data_2_rds_custom_mode(daily_expired_df, daily_table)
-    print("************ DB is updated with updated data****************")
-
     print("************* Data is written to S3 *****************")
-    #write_data_2_s3(glueContext, daily_updated_df, conf["s3_destination"])
-    #write_data_2_s3(glueContext, daily_expired_df, conf["s3_destination"])
+    updated_df_location=conf["s3_destination"]+"_SUCCESS_"+job_id
+    expired_df_location=conf["s3_destination"]+"_FAIL_"+job_id
+    write_data_2_s3(glueContext, daily_updated_df, updated_df_location)
+    write_data_2_s3(glueContext, daily_expired_df, expired_df_location)
     print("---------------------Daily Job Completed---------------------")
 

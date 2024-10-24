@@ -38,7 +38,8 @@ raw_json_2_database:
   file_name: file_name
   file_load_dt: file_load_dt
 test_config1: true
-test_config2: 0
+company_id_regex: '[^/]+'
+company_id_column: '_links_self_href'
 dataquality:
   null_check_columns: 'invoice_id,invoice_no'
 dataquality_output_path: s3://chello/ingestion/dq_reports/

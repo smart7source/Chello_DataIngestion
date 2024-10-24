@@ -34,3 +34,5 @@ test_config2: 0
 dataquality:
   null_check_columns: 'supplier_id'
 dataquality_output_path: s3://chello/ingestion/dq_reports/
+company_id_regex: '[^/]+'
+company_id_column: '_links_self_href'

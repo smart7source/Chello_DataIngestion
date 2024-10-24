@@ -63,23 +63,33 @@ def perform_validation_ingestion_activity(raw_data_df:DataFrame, job_id:string, 
     conf=read_ingestion_conf(conf_bucket, conf_file)
     raw_2_db_mappings= conf["raw_json_2_database"]
     select_columns= conf["raw_json_flatten_columns"]
+    company_id_col= conf["company_id_column"]
     print("############################################################")
     raw_data_df = prep_data(raw_data_df, conf)
+    # Check if the column "name" exists
+    if company_id_col in raw_data_df.columns:
+        select_columns.append(company_id_col)
+    else:
+        print("_links_self_href Column 'name' does not exist")
+
     raw_data_df_select=raw_data_df.select(*select_columns)
-    print("raw_data_df_selectraw_data_df_select Total Record Count Before Flatten...", raw_data_df_select.count())
-    print("############################################################")
-
     enrich_df=enrich_data(raw_data_df_select, raw_2_db_mappings)
-    print("These are the details of the countssss")
-    print(enrich_df.count())
 
+    if company_id_col in enrich_df.columns:
+        company_id_href = enrich_df.select(company_id_col).collect()[0][0]
+        regex= conf["company_id_regex"]
+        matches = re.findall(regex, company_id_href)
+        enrich_df=enrich_df.withColumn(company_id_col, f.lit(""))
+        if len(matches) >= 2:
+            second_match = matches[1]
+            enrich_df=enrich_df.withColumn(company_id_col, f.lit(second_match))
+
+    enrich_df=enrich_df.withColumnRenamed(company_id_col, "company_id")
     enrich_df=enrich_df.dropDuplicates()
     print("These are the details of the counts after the DROP Duplicates......")
-    print(enrich_df.count())
     total_record_count=enrich_df.count()
     total_record_count_str=str(total_record_count)
     dq_rules_dict=conf["dataquality"]
-
 
     insert_record(INSERT_SQL,(job_id,'PAYMENT',total_record_count_str, '0', '0',provide_datetime(),provide_datetime(),raw_file_path, '', 'STARTED'))
     validate_raw_df=validatedata(job_id, enrich_df, dq_rules_dict)

@@ -1,0 +1,43 @@
+# Invoice Data.
+db_destination: 'DB_Chello'
+s3_destination: s3://chello/ingestion/output_files/
+table_job_tracking: 'job_tracking'
+table_bronze_layer: 'STG_A_ACCOUNTS'
+table_gold_layer: ''
+table_report_layer: ''
+raw_json_flatten_columns:
+  - results_id
+  - results_nominalCode
+  - results_name
+  - results_currentBalance
+  - results_currency
+  - results_fullyQualifiedCategory
+  - results_metadata_isDeleted
+  - results_fullyQualifiedName
+  - results_type
+  - results_status
+  - results_isBankAccount
+  - job_id
+  - file_name
+  - file_load_dt
+raw_json_2_database:
+  results_id: acc_id
+  results_nominalCode: acc_cd
+  results_name: acc_name
+  results_currentBalance: current_bal
+  results_currency: acc_curr
+  results_type: acc_type
+  results_status: acc_status
+  results_isBankAccount: bank_acc
+  results_fullyQualifiedName: fully_qualified_name
+  results_fullyQualifiedCategory: fully_qualified_cat
+  results_metadata_isDeleted: is_deleted
+  job_id: job_id
+  file_name: file_name
+  file_load_dt: file_load_dt
+test_config1: true
+company_id_regex: '[^/]+'
+company_id_column: '_links_self_href'
+dataquality:
+  null_check_columns: 'acc_id,id'
+dataquality_output_path: s3://chello/ingestion/dq_reports/
