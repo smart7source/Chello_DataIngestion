@@ -1,0 +1,45 @@
+# Invoice Data.
+db_destination: 'chellodb'
+s3_destination: s3://lakehouse-bronze-dev/chellointernalinsight/output_files/stage/
+table_job_tracking: 'layerc_reporting.job_tracking'
+table_bronze_layer: 'layera_staging.stg_b_transactions'
+table_gold_layer: ''
+table_report_layer: ''
+raw_json_flatten_columns:
+  - accounts_account_id
+  - accounts_balances_available
+  - accounts_balances_current
+  - accounts_balances_iso_currency_code
+  - accounts_name
+  - accounts_official_name
+  - accounts_subtype
+  - transactions_account_id
+  - transactions_amount
+  - transactions_category
+  - transactions_name
+  - transactions_date
+  - transactions_transaction_id
+  - transactions_pending
+  - job_id
+raw_json_2_database:
+  accounts_account_id: acc_id
+  accounts_balances_available: bal_available
+  accounts_balances_current: bal_current
+  accounts_balances_iso_currency_code: iso_curr_code
+  accounts_name: acc_name
+  accounts_official_name: acc_official_name
+  accounts_subtype: subtype
+  transactions_account_id: trans_acc_id
+  transactions_amount: trans_amt
+  transactions_category: trans_cat
+  transactions_name: trans_name
+  transactions_date: trans_dt
+  transactions_transaction_id: trans_id
+  transactions_pending: is_pending
+  job_id: job_id
+test_config1: true
+company_id_regex: '[^/]+'
+company_id_column: '_links_self_href'
+dataquality:
+  null_check_columns: 'acc_id'
+dataquality_output_path: s3://lakehouse-bronze-dev/chellointernalinsight/dq_reports/

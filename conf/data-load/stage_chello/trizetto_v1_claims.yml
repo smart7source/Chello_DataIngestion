@@ -1,0 +1,59 @@
+# Invoice Data.
+db_destination: 'chellodb'
+s3_destination: s3://lakehouse-bronze-dev/chellointernalinsight/output_files/stage/
+table_job_tracking: 'layerc_reporting.job_tracking'
+table_bronze_layer: 'layera_staging.stg_t_v1_claims'
+table_silver_layer: ''
+table_gold_layer: ''
+raw_json_flatten_columns:
+  - Identifier
+  - OrgIdentifier
+  - BillingProviderNPI
+  - RenderingProviderNPI
+  - ClaimDate
+  - TotalAmount
+  - BilledAmount
+  - PrimaryPayerId
+  - SecondaryPayerId
+  - DiagnosisCode
+  - StatusDate
+  - ClaimAckCode
+  - RecordCreationDate
+  - PrimaryPayerType
+  - ReceivedDate
+  - ServiceLineIdentifier
+  - ClaimIdentifier
+  - ProcedureCode
+  - ChargeAmount
+  - StartServiceDate
+  - EndServiceDate
+  - job_id
+raw_json_2_database:
+  Identifier: claim_id
+  OrgIdentifier: org_id
+  BillingProviderNPI: bill_prov_npi
+  RenderingProviderNPI: rend_prov_npi
+  ClaimDate: claim_dt
+  TotalAmount: total_amt
+  BilledAmount: bill_amt
+  PrimaryPayerId: primary_payer_id
+  SecondaryPayerId: secondary_payer_id
+  DiagnosisCode: diagnosis_cd
+  StatusDate: status_dt
+  ClaimAckCode: claim_ack_cd
+  RecordCreationDate: record_creation_dt
+  PrimaryPayerType: primary_payer_type
+  ReceivedDate: received_dt
+  ServiceLineIdentifier: service_line_id
+  ClaimIdentifier: claim_id_v1
+  ProcedureCode: procedure_cd
+  ChargeAmount: charge_amt
+  StartServiceDate: start_service_dt
+  EndServiceDate: end_service_dt
+  job_id: job_id
+test_config1: true
+company_id_regex: '[^/]+'
+company_id_column: '_links_self_href'
+dataquality:
+  null_check_columns: ''
+dataquality_output_path: s3://lakehouse-bronze-dev/chellointernalinsight/dq_reports/

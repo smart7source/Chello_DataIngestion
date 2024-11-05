@@ -1,0 +1,45 @@
+db_destination: 'chellodb'
+s3_destination: s3://lakehouse-bronze-dev/chellointernalinsight/output_files/stage/
+table_job_tracking: "layerc_reporting.job_tracking"
+table_bronze_layer: "layera_staging.stg_a_fs_bal_st"
+table_gold_layer: ''
+table_report_layer: ''
+raw_json_flatten_columns:
+  - reportItems_accountId
+  - reportItems_accountName
+  - reportItems_balance
+  - reportItems_date
+  - reportItems_accountCategory_id
+  - reportItems_accountCategory_status
+  - reportInfo_companyName
+  - reportInfo_currency
+  - reportInfo_generatedDate
+  - reportInfo_reportName
+  - reportItems_accountCategory_levels_confidence
+  - reportItems_accountCategory_levels_levelName
+  - job_id
+raw_json_2_database:
+  reportItems_accountId: acc_id
+  reportItems_accountName: acc_name
+  reportItems_balance: bal_amt
+  reportItems_date: bal_dt
+  reportItems_accountCategory_id: cat_id
+  reportItems_accountCategory_status: cat_status
+  reportInfo_companyName: comp_name
+  reportInfo_currency: curr
+  reportInfo_generatedDate: gen_dt
+  reportInfo_reportName: report_name
+  reportItems_accountCategory_levels_confidence: confidence
+  reportItems_accountCategory_levels_levelName: level_name
+  job_id: job_id
+company_id_regex: '[^/]+'
+company_id_column: '_links_self_href'
+raw_2_db_cast:
+  reportItems_balance: "double"
+  reportItems_date: "date"
+  reportInfo_generatedDate: "date"
+  reportItems_accountCategory_levels_confidence: "integer"
+company_id_column_db: 'comp_id'
+dataquality:
+  null_check_columns: 'acc_id,cat_id'
+dataquality_output_path: s3://lakehouse-bronze-dev/chellointernalinsight/dq_reports/

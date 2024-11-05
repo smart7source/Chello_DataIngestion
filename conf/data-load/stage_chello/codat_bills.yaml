@@ -1,0 +1,42 @@
+# Invoice Data.
+db_destination: 'DB_Chello'
+s3_destination: s3://lakehouse-bronze-dev/chellointernalinsight/output_files/stage/
+table_job_tracking: 'layerc_reporting.job_tracking'
+table_bronze_layer: 'layera_staging.stg_a_bills'
+table_gold_layer: ''
+table_report_layer: ''
+raw_json_flatten_columns:
+  - results_id
+  - results_supplierRef_id
+  - results_supplierRef_supplierName
+  - results_issueDate
+  - results_dueDate
+  - results_totalAmount
+  - results_amountDue
+  - results_currency
+  - results_metadata_isDeleted
+  - results_lineItems_accountRef_name
+  - job_id
+raw_json_2_database:
+  results_id: bill_id
+  results_supplierRef_id: supplier_id
+  results_supplierRef_supplierName: supplier_name
+  results_issueDate: bills_issue_dt
+  results_dueDate: bills_due_dt
+  results_totalAmount: total_amt
+  results_amountDue: due_amt
+  results_currency: curr
+  results_lineItems_accountRef_name: reference
+  results_metadata_isDeleted: is_deleted
+  job_id: job_id
+raw_2_db_cast:
+  results_totalAmount: "double"
+  results_amountDue: "double"
+  results_issueDate: "date"
+  results_dueDate: "date"
+company_id_regex: '[^/]+'
+company_id_column: '_links_self_href'
+company_id_column_db: 'comp_id'
+dataquality:
+  null_check_columns: 'bill_id'
+dataquality_output_path: s3://lakehouse-bronze-dev/chellointernalinsight/dq_reports/
